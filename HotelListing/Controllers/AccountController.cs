@@ -84,7 +84,7 @@ namespace HotelListing.Controllers
                 return Accepted(new {Token = await _authManager.CreateToken()});
             }
             catch (Exception ex)
-            {
+            { 
                 return BadRequest("Register user failed. Something go wrong");
 
             }
