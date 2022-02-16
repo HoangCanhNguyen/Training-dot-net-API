@@ -1,8 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
+using HotelListing.Models;
 using HotelListing.Repository;
 using HotelListing.services;
+using HotelListing.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -65,8 +69,11 @@ namespace HotelListing
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
             });
 
-            services.AddControllers().AddNewtonsoftJson(op => 
-            op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.ConfigureControllerAndFluentValidations();
+
+            // Register FluentValidation Service
+            //services.AddScoped<IValidator<CreateHotelDTO>, HotelValidator>();
 
         }
 
@@ -79,6 +86,8 @@ namespace HotelListing
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelListing v1"));
             }
+
+            app.ConfigureExceptionHandler();
 
             app.UseHttpsRedirection();
 
