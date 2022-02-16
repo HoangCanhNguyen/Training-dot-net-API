@@ -1,8 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
+using HotelListing.Models;
 using HotelListing.Repository;
 using HotelListing.services;
+using HotelListing.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -66,9 +70,10 @@ namespace HotelListing
             });
 
 
+            services.ConfigureControllerAndFluentValidations();
 
-            services.AddControllers().AddNewtonsoftJson(op => 
-            op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            // Register FluentValidation Service
+            //services.AddScoped<IValidator<CreateHotelDTO>, HotelValidator>();
 
         }
 

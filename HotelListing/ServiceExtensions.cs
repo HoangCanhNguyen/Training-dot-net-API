@@ -1,5 +1,8 @@
-﻿using HotelListing.Data;
+﻿using FluentValidation.AspNetCore;
+using HotelListing.Data;
+using HotelListing.Filters;
 using HotelListing.Models;
+using HotelListing.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -74,6 +77,23 @@ namespace HotelListing
                    }
                });
            });
+        }
+
+        public static void ConfigureControllerAndFluentValidations(this IServiceCollection services)
+        {
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidationFilter>();
+            })
+            .AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssemblyContaining<HotelValidator>();
+                options.RegisterValidatorsFromAssemblyContaining<UserValidator>();
+            })
+            .AddNewtonsoftJson(op =>
+                op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
     }
 }

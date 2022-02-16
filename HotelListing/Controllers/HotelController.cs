@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Models;
@@ -18,12 +19,19 @@ namespace HotelListing.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<HotelController> _logger;
         private readonly IMapper _mapper;
+        private readonly IValidator<CreateHotelDTO> _validator;
 
-        public HotelController(IUnitOfWork unitOfWork, ILogger<HotelController> logger, IMapper mapper)
+        public HotelController(
+            IUnitOfWork unitOfWork,
+            ILogger<HotelController> logger, 
+            IMapper mapper,
+            IValidator<CreateHotelDTO> validator
+            )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -70,18 +78,12 @@ namespace HotelListing.Controllers
             {
                 return BadRequest(ModelState);
             }
-            try
-            {
-                var hotel = _mapper.Map<Hotel>(hotelDTO);
-                await _unitOfWork.Hotels.Insert(hotel);
-                await _unitOfWork.Save();
 
-                return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var hotel = _mapper.Map<Hotel>(hotelDTO);
+            await _unitOfWork.Hotels.Insert(hotel);
+            await _unitOfWork.Save();
+
+            return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
         }
         
         [HttpPut("{id:int}")]

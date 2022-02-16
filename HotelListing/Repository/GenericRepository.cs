@@ -10,7 +10,7 @@ using X.PagedList;
 
 namespace HotelListing.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T>  where T : class
     {
         private readonly DatabaseContext _context;
         private readonly DbSet<T> _db;
