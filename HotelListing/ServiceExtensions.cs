@@ -20,11 +20,11 @@ namespace HotelListing
     {
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentityCore<ApiUser>(service =>
+            var builder = services.AddIdentityCore<ApplicationUser>(service =>
             {
                 service.User.RequireUniqueEmail = true;
                 service.Password.RequiredLength = 8;
-            });
+            }).AddRoles<IdentityRole>();
 
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
             builder.AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
@@ -72,7 +72,7 @@ namespace HotelListing
                        await context.Response.WriteAsync(new Error
                        {
                            StatusCode = context.Response.StatusCode,
-                           Message = "Internal Server Error. Please try again"
+                           Message = $"Internal Server Error. Please try again at {contextFeature.Error}"
                        }.ToString());
                    }
                });
@@ -88,8 +88,13 @@ namespace HotelListing
             })
             .AddFluentValidation(options =>
             {
-                options.RegisterValidatorsFromAssemblyContaining<HotelValidator>();
-                options.RegisterValidatorsFromAssemblyContaining<UserValidator>();
+                //options.RegisterValidatorsFromAssemblyContaining<HotelValidator>();
+                options.RegisterValidatorsFromAssemblyContaining<UserLoginValidator>();
+                options.RegisterValidatorsFromAssemblyContaining<RegisterValidator>();
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             })
             .AddNewtonsoftJson(op =>
                 op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
