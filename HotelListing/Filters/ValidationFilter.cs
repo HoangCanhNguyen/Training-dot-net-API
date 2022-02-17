@@ -23,7 +23,8 @@ namespace HotelListing.Filters
                         var errorDetail = new Error
                         {
                             Key = error.Key,
-                            Message = subError
+                            Message = subError,
+                            StatusCode = 400
                         };
 
                         errorResponse.Errors.Add(errorDetail);
@@ -33,6 +34,8 @@ namespace HotelListing.Filters
                 return;
             }
             await next();
+            var errorAfterAction = context;
+            var hello = "  ";
         }
     }
 }
